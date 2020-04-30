@@ -9,8 +9,7 @@ Created on Tue Apr 28 13:16:13 2020
 import sys
 import os
 import numpy as np
-
-
+import matplotlib.pyplot as plt
 
 def getfiledata(filename):
     with open(filename, 'rb') as f:
@@ -43,5 +42,10 @@ def load_frames(file_name, frame_end, height_im, width_im):
     return block
 
 dir='/Users/Ashley/Downloads/'
-files_list = (get_file_list(dir))
-print(files_list[0])
+files_list = get_file_list(dir)
+for file_name in files_list:
+    width_im, height_im, number_frames = getfiledata(file_name)
+    print(number_frames)
+
+
+
