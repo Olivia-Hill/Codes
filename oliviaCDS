@@ -8,12 +8,40 @@ Created on Tue Apr 28 13:16:13 2020
 
 import sys
 import os
-import get_file_list
-import getfiledata
-import load_frames
+import numpy as np
 
 
 
-dir='/data/ndr_calibration/NDR-Calibration_CDS/'
-get_file_list(dir)
-print(file_list)
+def getfiledata(filename):
+    with open(filename, 'rb') as f:
+        f.seek(266)
+        data = f.read(16)
+        width_im = int(data.decode('utf-8'))
+        f.seek(347)
+        data = f.read(16)
+        height_im = int(data.decode('utf-8'))
+        f.seek(425)
+        data = f.read(16)
+        number_frames = int(data.decode('utf-8'))
+    return width_im, height_im, number_frames
+
+def get_file_list(dir):
+    file_list = []
+    for file in os.listdir(dir):
+        if file.endswith(".tsm"):
+            file_name = dir + file
+            file_list.append(file_name)
+    return file_list
+
+def load_frames(file_name, frame_end, height_im, width_im):
+    file = open(file_name, 'rb')
+    DATA_OFFSET = 2880
+    BYTE_DEPTH = 2
+    file.seek(DATA_OFFSET)
+    data = file.read(width_im * height_im * BYTE_DEPTH * frame_end)
+    block = np.frombuffer(data, dtype=np.uint16).reshape(frame_end, height_im, width_im)
+    return block
+
+dir='/Users/Ashley/Downloads/'
+files_list = (get_file_list(dir))
+print(files_list[0])
